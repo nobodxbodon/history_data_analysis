@@ -40,13 +40,13 @@ public class 读CBDB {
       Statement stmt = 联结.createStatement();
       ResultSet rs = stmt.executeQuery(sql);
       List<String> 无姓 = new ArrayList<>();
-      int 吴姓 = 0;
+      //int 吴姓 = 0;
       while (rs.next()) {
         String 全名 = rs.getString("c_name_chn");
         String 姓 = rs.getString("c_surname_chn");
-        if ("吳".equals(姓)) {
+        /*if ("吳".equals(姓)) {
           吴姓 ++;
-        }
+        }*/
         if (姓 != null) {
           if (繁体未排序.containsKey(姓)) {
             繁体未排序.put(姓, 繁体未排序.get(姓) + 1);
@@ -57,17 +57,17 @@ public class 读CBDB {
           无姓.add(全名);
         }
       }
-      System.out.println(繁体未排序);
-      System.out.println("吴姓: " + 吴姓);
+      //System.out.println(繁体未排序);
+      //System.out.println("吴姓: " + 吴姓);
       for(String 姓 : 繁体未排序.keySet()) {
         String 简体姓 = 简繁转换类.转换(姓, 目标.简体);
         if (未排序.containsKey(简体姓)) {
-          未排序.put(姓, 繁体未排序.get(姓) + 未排序.get(简体姓));
+          未排序.put(简体姓, 繁体未排序.get(姓) + 未排序.get(简体姓));
         } else {
           未排序.put(简体姓, 繁体未排序.get(姓));
         }
       }
-      System.out.println(未排序.get("吴"));
+      //System.out.println(未排序.get("吴"));
       for (String 名 : 无姓) {
         // System.out.println(名);
         String 姓 = 简繁转换类.转换(名, 目标.简体).substring(0, 1);
