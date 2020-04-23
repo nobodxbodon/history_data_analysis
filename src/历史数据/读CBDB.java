@@ -5,10 +5,15 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.github.nobodxbodon.zhconverter.简繁转换类;
+import com.github.nobodxbodon.zhconverter.简繁转换类.目标;
 
 // 参考: https://www.sqlitetutorial.net/sqlite-java/
 public class 读CBDB {
@@ -25,21 +30,34 @@ public class 读CBDB {
   }
 
   public void 统计姓() {
-    String sql = "SELECT c_surname_chn FROM biog_main";
-    Map<String, Integer> unSortedMap = new HashMap<>();
+    String sql = "SELECT c_name_chn, c_surname_chn FROM biog_main";
+    Map<String, Integer> 未排序 = new HashMap<>();
 
     try {
       Connection 联结 = this.连接();
       Statement stmt = 联结.createStatement();
       ResultSet rs = stmt.executeQuery(sql);
-
+      List<String> 无姓 = new ArrayList<>();
       while (rs.next()) {
+        String 全名 = rs.getString("c_name_chn");
         String 姓 = rs.getString("c_surname_chn");
-
-        if (unSortedMap.containsKey(姓)) {
-          unSortedMap.put(姓, unSortedMap.get(姓) + 1);
+        if (姓 != null) {
+          姓 = 简繁转换类.转换(姓, 目标.简体);
+          
+          if (未排序.containsKey(姓)) {
+            未排序.put(姓, 未排序.get(姓) + 1);
+          } else {
+            未排序.put(姓, 1);
+          }
         } else {
-          unSortedMap.put(姓, 1);
+          无姓.add(全名);
+        }
+      }
+      for (String 名 : 无姓) {
+        // System.out.println(名);
+        String 姓 = 名.substring(0, 1);
+        if (未排序.containsKey(姓)) {
+          未排序.put(姓, 未排序.get(姓) + 1);
         }
       }
     } catch (SQLException e) {
@@ -47,12 +65,12 @@ public class 读CBDB {
     }
 
     // 排序参考: https://howtodoinjava.com/sort/java-sort-map-by-values/
-    LinkedHashMap<String, Integer> reverseSortedMap = new LinkedHashMap<>();
+    LinkedHashMap<String, Integer> 排序 = new LinkedHashMap<>();
 
-    unSortedMap.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-        .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
+    未排序.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+        .forEachOrdered(x -> 排序.put(x.getKey(), x.getValue()));
 
-    System.out.println("大姓: " + reverseSortedMap);
+    System.out.println("大姓: " + 排序);
   }
 
   public void 所有人() {
