@@ -42,7 +42,6 @@ public class 读CBDB {
       List<String> 无姓 = new ArrayList<>();
       //int 吴姓 = 0;
       while (rs.next()) {
-        String 全名 = rs.getString("c_name_chn");
         String 姓 = rs.getString("c_surname_chn");
         /*if ("吳".equals(姓)) {
           吴姓 ++;
@@ -54,6 +53,7 @@ public class 读CBDB {
             繁体未排序.put(姓, 1);
           }
         } else {
+          String 全名 = rs.getString("c_name_chn");
           无姓.add(全名);
         }
       }
@@ -84,6 +84,7 @@ public class 读CBDB {
       人数 += 未排序.get(姓);
     }
     System.out.println("总人数: " + 人数);
+    System.out.println("耗时: " + (System.currentTimeMillis() - 开始) + "ms");
     // 排序参考: https://howtodoinjava.com/sort/java-sort-map-by-values/
     LinkedHashMap<String, Integer> 排序 = new LinkedHashMap<>();
 
@@ -91,7 +92,7 @@ public class 读CBDB {
         .forEachOrdered(x -> 排序.put(x.getKey(), x.getValue()));
 
     System.out.println("大姓: " + 排序);
-    System.out.println("耗时: " + (System.currentTimeMillis() - 开始) + "ms");
+    System.out.println("加排序耗时: " + (System.currentTimeMillis() - 开始) + "ms");
   }
 
   public void 所有人() {
